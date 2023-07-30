@@ -1,0 +1,9 @@
+**/*.rs.bk
+*.log
+*.log.*
+*.tar
+*.xz
+dist/
+target/
+.idea/
+.DS_Store

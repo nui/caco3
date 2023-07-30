@@ -1,0 +1,24 @@
+[package]
+name = "caco3"
+version = "0.1.0"
+edition = "2021"
+publish = true
+description = "CaCO3 common lib"
+license = "MIT OR Apache-2.0"
+readme = "readme.package.md"
+exclude = ["test-all.sh", "README.md"]
+rust-version = "1.70.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+default = []
+local-offset = ["time/local-offset", "dep:tz-rs"]
+
+[dependencies]
+indoc = "2"
+serde = { version = "1", features = ["derive"] }
+thiserror = "1"
+time = { version = "0.3", features = ["local-offset", "macros", "serde", "serde-well-known"] }
+toml = { version = "0.7" }
+tz-rs = { version = "0.6", optional = true }
