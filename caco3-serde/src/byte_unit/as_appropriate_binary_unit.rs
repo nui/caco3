@@ -96,6 +96,7 @@ mod private {
 
     #[cfg(test)]
     mod tests {
+        use serde_test::{assert_ser_tokens, Token};
         use super::*;
 
         #[test]
@@ -107,22 +108,32 @@ mod private {
         #[test]
         fn test_serialize() {
             #[derive(Serialize)]
+            #[serde(transparent)]
             struct BinaryByte(#[serde(serialize_with = "super::super::serialize")] Byte);
             let byte = BinaryByte(Byte::from_bytes(2 * 1024));
-            let actual = serde_json::to_string(&byte).unwrap();
-            assert_eq!(actual, r#""2.00 KiB""#);
+            assert_ser_tokens(
+                &byte,
+                &[
+                    Token::Str(r#"2.00 KiB"#)
+                ]
+            );
 
             #[derive(Serialize)]
+            #[serde(transparent)]
             struct BinaryOptionByte(
                 #[serde(serialize_with = "super::super::serialize")] Option<Byte>,
             );
             let byte = BinaryOptionByte(None);
-            let actual = serde_json::to_string(&byte).unwrap();
-            assert_eq!(actual, r#"null"#);
+            assert_ser_tokens(
+                &byte,
+                &[Token::None]
+            );
 
             let byte = BinaryOptionByte(Some(Byte::from_bytes(2 * 1024)));
-            let actual = serde_json::to_string(&byte).unwrap();
-            assert_eq!(actual, r#""2.00 KiB""#);
+            assert_ser_tokens(
+                &byte,
+                &[Token::Some, Token::Str("2.00 KiB")]
+            );
         }
     }
 }

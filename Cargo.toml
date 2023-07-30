@@ -6,4 +6,5 @@ members = [
     "caco3-web",
 ]
 default-members = ["caco3", "caco3-build-info", "caco3-serde"]
+resolver = "2"
 

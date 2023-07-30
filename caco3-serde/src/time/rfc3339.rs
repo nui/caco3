@@ -198,107 +198,129 @@ mod private {
 
     #[cfg(test)]
     mod milli_tests {
+        use serde_test::{assert_de_tokens, assert_ser_tokens, Token};
         use time::macros::datetime;
 
         use super::super::millisecond;
         use super::*;
 
-        #[derive(Serialize, Deserialize)]
+        #[derive(Serialize, Deserialize, PartialEq, Debug)]
         #[serde(transparent)]
         struct Owned(#[serde(with = "millisecond")] OffsetDateTime);
 
-        #[derive(Serialize)]
+        #[derive(Serialize, PartialEq, Debug)]
         #[serde(transparent)]
         struct Ref<'a>(#[serde(with = "millisecond")] &'a OffsetDateTime);
 
-        #[derive(Serialize, Deserialize)]
+        #[derive(Serialize, Deserialize, PartialEq, Debug)]
         #[serde(transparent)]
         struct OptionOwned(#[serde(with = "millisecond")] Option<OffsetDateTime>);
 
         #[test]
         fn deserialize_millisecond() {
-            let actual: Owned =
-                serde_json::from_str(r#""2022-01-01T19:00:10.123456789+07:00""#).unwrap();
-            assert_eq!(actual.0, datetime!(2022-01-01 19:00:10.123+07:00));
+            assert_de_tokens(
+                &Owned(datetime!(2022-01-01 19:00:10.123+07:00)),
+                &[Token::Str("2022-01-01T19:00:10.123456789+07:00")]
+            );
 
-            let actual: OptionOwned =
-                serde_json::from_str(r#""2022-01-01T19:00:10.123456789+07:00""#).unwrap();
-            assert_eq!(actual.0.unwrap(), datetime!(2022-01-01 19:00:10.123+07:00));
+            assert_de_tokens(
+                &OptionOwned(Some(datetime!(2022-01-01 19:00:10.123+07:00))),
+                &[Token::Some, Token::Str("2022-01-01T19:00:10.123456789+07:00")]
+            );
         }
 
         #[test]
         fn serialize_millisecond() {
             let datetime = datetime!(2022-01-01 19:00:10.123456789+07:00);
 
-            let actual = serde_json::to_string(&Owned(datetime)).unwrap();
-            assert_eq!(actual, r#""2022-01-01T19:00:10.123+07:00""#);
+            assert_ser_tokens(
+                &Owned(datetime),
+                &[Token::Str("2022-01-01T19:00:10.123+07:00")],
+            );
 
-            let actual = serde_json::to_string(&Ref(&datetime)).unwrap();
-            assert_eq!(actual, r#""2022-01-01T19:00:10.123+07:00""#);
+            assert_ser_tokens(
+                &Ref(&datetime),
+                &[Token::Str("2022-01-01T19:00:10.123+07:00")],
+            );
 
-            let actual = serde_json::to_string(&OptionOwned(Some(datetime))).unwrap();
-            assert_eq!(actual, r#""2022-01-01T19:00:10.123+07:00""#);
+            assert_ser_tokens(
+                &OptionOwned(Some(datetime)),
+                &[Token::Some, Token::Str("2022-01-01T19:00:10.123+07:00")],
+            );
 
-            let actual = serde_json::to_string(&OptionOwned(None)).unwrap();
-            assert_eq!(actual, "null");
+            assert_ser_tokens(
+                &OptionOwned(None),
+                &[Token::None],
+            );
 
-            let actual =
-                serde_json::to_string(&Owned(datetime!(2022-01-01 19:00:10.123456789+00:00)))
-                    .unwrap();
-            assert_eq!(actual, r#""2022-01-01T19:00:10.123Z""#);
+            assert_ser_tokens(
+                &Owned(datetime!(2022-01-01 19:00:10.123456789+00:00)),
+                &[Token::Str("2022-01-01T19:00:10.123Z")],
+            );
         }
     }
 
     #[cfg(test)]
     mod second_tests {
+        use serde_test::{assert_de_tokens, assert_ser_tokens, Token};
         use time::macros::datetime;
 
         use super::super::second;
         use super::*;
 
-        #[derive(Serialize, Deserialize)]
+        #[derive(Serialize, Deserialize, PartialEq, Debug)]
         #[serde(transparent)]
         struct Owned(#[serde(with = "second")] OffsetDateTime);
 
-        #[derive(Serialize)]
+        #[derive(Serialize, PartialEq, Debug)]
         #[serde(transparent)]
         struct Ref<'a>(#[serde(with = "second")] &'a OffsetDateTime);
 
-        #[derive(Serialize, Deserialize)]
+        #[derive(Serialize, Deserialize, PartialEq, Debug)]
         #[serde(transparent)]
         struct OptionOwned(#[serde(with = "second")] Option<OffsetDateTime>);
 
         #[test]
         fn deserialize_second() {
-            let actual: Owned =
-                serde_json::from_str(r#""2022-01-01T19:00:10.123456789+07:00""#).unwrap();
-            assert_eq!(actual.0, datetime!(2022-01-01 19:00:10+07:00));
+            assert_de_tokens(
+                &Owned(datetime!(2022-01-01 19:00:10+07:00)),
+                &[Token::Str("2022-01-01T19:00:10.123456789+07:00")],
+            );
 
-            let actual: OptionOwned =
-                serde_json::from_str(r#""2022-01-01T19:00:10.123456789+07:00""#).unwrap();
-            assert_eq!(actual.0.unwrap(), datetime!(2022-01-01 19:00:10+07:00));
+            assert_de_tokens(
+                &OptionOwned(Some(datetime!(2022-01-01 19:00:10+07:00))),
+                &[Token::Some, Token::Str("2022-01-01T19:00:10.123456789+07:00")],
+            );
         }
 
         #[test]
         fn serialize_second() {
             let datetime = datetime!(2022-01-01 19:00:10.123456789+07:00);
 
-            let actual = serde_json::to_string(&Owned(datetime)).unwrap();
-            assert_eq!(actual, r#""2022-01-01T19:00:10+07:00""#);
+            assert_ser_tokens(
+                &Owned(datetime),
+                &[Token::Str("2022-01-01T19:00:10+07:00")],
+            );
 
-            let actual = serde_json::to_string(&Ref(&datetime)).unwrap();
-            assert_eq!(actual, r#""2022-01-01T19:00:10+07:00""#);
+            assert_ser_tokens(
+                &Ref(&datetime),
+                &[Token::Str("2022-01-01T19:00:10+07:00")],
+            );
 
-            let actual = serde_json::to_string(&OptionOwned(Some(datetime))).unwrap();
-            assert_eq!(actual, r#""2022-01-01T19:00:10+07:00""#);
+            assert_ser_tokens(
+                &OptionOwned(Some(datetime)),
+                &[Token::Some, Token::Str("2022-01-01T19:00:10+07:00")],
+            );
 
-            let actual = serde_json::to_string(&OptionOwned(None)).unwrap();
-            assert_eq!(actual, "null");
+            assert_ser_tokens(
+                &OptionOwned(None),
+                &[Token::None],
+            );
 
-            let actual =
-                serde_json::to_string(&Owned(datetime!(2022-01-01 19:00:10.123456789+00:00)))
-                    .unwrap();
-            assert_eq!(actual, r#""2022-01-01T19:00:10Z""#);
+            assert_ser_tokens(
+                &Owned(datetime!(2022-01-01 19:00:10.123456789+00:00)),
+                &[Token::Str("2022-01-01T19:00:10Z")],
+            );
         }
     }
 }
