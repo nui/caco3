@@ -1,4 +1,7 @@
+pub use bool_from_config_value::bool_from_config_value;
 pub use meta::MetaConfig;
+
+mod bool_from_config_value;
 mod meta;
 
 pub fn is_yes<T: AsRef<str>>(value: T) -> bool {
