@@ -2,6 +2,7 @@
 members = [
     "caco3",
     "caco3-build-info",
+    "caco3-serde",
 ]
-default-members = ["caco3", "caco3-build-info"]
+default-members = ["caco3", "caco3-build-info", "caco3-serde"]
 

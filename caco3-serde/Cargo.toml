@@ -1,0 +1,28 @@
+[package]
+name = "caco3-serde"
+version = "0.1.0"
+edition = "2021"
+publish = true
+description = "CaCO3 serde adaptor"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/nui/caco3"
+authors = ["Narongwet Mongkonsatcha <narongwet.m@gmail.com>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+default = ["time"]
+byte-unit = ["dep:byte-unit"]
+figment = ["dep:figment"]
+time = ["dep:time"]
+
+[dependencies]
+bytemuck = { version = "1.13", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+
+byte-unit = { version = "4", default-features = false, features = ["serde"], optional = true }
+figment = { version = "0.10", optional = true }
+time = { version = "0.3", optional = true, features = ["serde", "serde-well-known", "macros"] }
+
+[dev-dependencies]
+serde_json = "1"

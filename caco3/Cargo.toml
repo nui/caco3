@@ -9,6 +9,7 @@ readme = "readme.package.md"
 exclude = ["test-all.sh", "README.md"]
 rust-version = "1.70.0"
 repository = "https://github.com/nui/caco3"
+authors = ["Narongwet Mongkonsatcha <narongwet.m@gmail.com>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
