@@ -120,12 +120,15 @@ fn is_valid_id(id: &str) -> bool {
 fn get_rustc_version() -> Result<String> {
     let output = Command::new("rustc")
         .arg("--version")
-        .output().context("get rustc version")?;
+        .output()
+        .context("get rustc version")?;
     if !output.status.success() {
         bail!("Failed to get rustc version");
     }
-    let version = String::from_utf8(output.stdout).context("version output to String")?;
-    Ok(version)
+    let version = core::str::from_utf8(&output.stdout)
+        .context("version output to utf8")?
+        .trim();
+    Ok(version.into())
 }
 
 fn get_commit_id(repo: &Repository) -> Result<CommitId> {
