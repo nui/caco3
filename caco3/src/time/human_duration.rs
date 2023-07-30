@@ -6,8 +6,6 @@ const MINUTE_SECONDS: u64 = 60;
 const HOUR_SECONDS: u64 = 60 * MINUTE_SECONDS;
 const DAY_SECONDS: u64 = 24 * HOUR_SECONDS;
 
-const ALL_COMPONENTS: u8 = u8::MAX;
-
 #[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq)]
 pub struct HumanDuration(u64);
 
@@ -39,6 +37,10 @@ impl HumanDuration {
         buf
     }
 
+    pub fn format_all(self) -> String {
+        self.format(DurationComponent::ALL_COMPONENTS)
+    }
+
     pub const fn components(self) -> DurationComponents {
         DurationComponents::new(self)
     }
@@ -48,6 +50,10 @@ impl HumanDuration {
             human_duration: self,
             num_components,
         }
+    }
+
+    pub const fn display_all(self) -> HumanDurationDisplay {
+        self.display(DurationComponent::ALL_COMPONENTS)
     }
 }
 
@@ -161,7 +167,7 @@ impl Iterator for DurationComponents {
 
 impl Display for HumanDuration {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        Display::fmt(&self.display(ALL_COMPONENTS), f)
+        Display::fmt(&self.display(DurationComponent::ALL_COMPONENTS), f)
     }
 }
 
