@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "caco3",
+    "caco3-build-info",
 ]
-default-members = ["caco3"]
+default-members = ["caco3", "caco3-build-info"]
 

@@ -1,0 +1,19 @@
+[package]
+name = "caco3-build-info"
+version = "0.1.0"
+edition = "2021"
+publish = true
+description = "CaCO3 build info"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/nui/caco3"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+
+[dependencies.git2]
+version = "0.17"
+default-features = false
+features = ["vendored-libgit2"]
