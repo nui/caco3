@@ -7,7 +7,7 @@ use time::{OffsetDateTime, UtcOffset};
 use tz::TimeZone;
 use tz::TzError;
 
-use crate::config::is_yes;
+use crate::config::is_truthy;
 
 /// Get now in local timezone.
 ///
@@ -36,7 +36,7 @@ fn local_utc_offset_impl(unix_timestamp: Option<i64>) -> UtcOffset {
 
     let use_cache_timezone = *USE_CACHE_TIMEZONE.get_or_init(|| {
         // Timezone is cached by default
-        std::env::var("CACO3_CACHE_TIMEZONE").map_or(true, is_yes)
+        std::env::var("CACO3_CACHE_TIMEZONE").map_or(true, is_truthy)
     });
 
     if cfg!(unix) {

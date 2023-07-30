@@ -10,7 +10,7 @@ const DAY_SECONDS: u64 = 24 * HOUR_SECONDS;
 pub struct HumanDuration(u64);
 
 impl HumanDuration {
-    pub const fn new(secs: u64) -> Self {
+    pub const fn from_secs(secs: u64) -> Self {
         HumanDuration(secs)
     }
 
@@ -33,7 +33,8 @@ impl HumanDuration {
     pub fn format(self, num_components: u8) -> String {
         let capacity = (num_components.saturating_mul(4)).min(16).into();
         let mut buf = String::with_capacity(capacity);
-        write!(&mut buf, "{}", self.display(num_components)).expect(HUMAN_DURATION_DISPLAY_IMPL_ERROR);
+        write!(&mut buf, "{}", self.display(num_components))
+            .expect(HUMAN_DURATION_DISPLAY_IMPL_ERROR);
         buf
     }
 
@@ -220,7 +221,9 @@ mod tests {
     #[test]
     fn test_iterator() {
         let secs = (1.std_days() + 5.std_hours() + 7.std_minutes() + 3.std_seconds()).as_secs();
-        let components = HumanDuration::new(secs).components().collect::<Vec<_>>();
+        let components = HumanDuration::from_secs(secs)
+            .components()
+            .collect::<Vec<_>>();
         assert_eq!(components[0].to_string(), "1d");
         assert_eq!(components[1].to_string(), "5h");
         assert_eq!(components[2].to_string(), "7m");

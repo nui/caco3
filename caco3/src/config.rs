@@ -1,21 +1,20 @@
-pub use bool_from_config_value::bool_from_config_value;
+pub use bool_from_choice::bool_from_choice;
 pub use meta::MetaConfig;
 
-mod bool_from_config_value;
+mod bool_from_choice;
 mod meta;
 
-pub fn is_yes<T: AsRef<str>>(value: T) -> bool {
+const FALSY_VALUES: &[&str] = &["0", "false", "n", "no", "off"];
+const TRUTHY_VALUES: &[&str] = &["1", "true", "y", "yes", "on"];
+
+pub fn is_falsy<T: AsRef<str>>(value: T) -> bool {
     let value = value.as_ref();
-    ["1", "true", "y", "yes", "on"]
-        .into_iter()
-        .any(|s| value.eq_ignore_ascii_case(s))
+    FALSY_VALUES.iter().any(|s| value.eq_ignore_ascii_case(s))
 }
 
-pub fn is_no<T: AsRef<str>>(value: T) -> bool {
+pub fn is_truthy<T: AsRef<str>>(value: T) -> bool {
     let value = value.as_ref();
-    ["0", "false", "n", "no", "off"]
-        .into_iter()
-        .any(|s| value.eq_ignore_ascii_case(s))
+    TRUTHY_VALUES.iter().any(|s| value.eq_ignore_ascii_case(s))
 }
 
 #[cfg(test)]
@@ -24,25 +23,25 @@ mod tests {
 
     #[test]
     fn test_is_yes() {
-        assert!(is_yes("1"));
-        assert!(is_yes("true"));
-        assert!(is_yes("y"));
-        assert!(is_yes("Y"));
-        assert!(is_yes("yes"));
-        assert!(is_yes("on"));
+        assert!(is_truthy("1"));
+        assert!(is_truthy("true"));
+        assert!(is_truthy("y"));
+        assert!(is_truthy("Y"));
+        assert!(is_truthy("yes"));
+        assert!(is_truthy("on"));
 
-        assert!(!is_yes("n"));
+        assert!(!is_truthy("n"));
     }
 
     #[test]
     fn test_is_no() {
-        assert!(is_no("0"));
-        assert!(is_no("false"));
-        assert!(is_no("n"));
-        assert!(is_no("N"));
-        assert!(is_no("no"));
-        assert!(is_no("off"));
+        assert!(is_falsy("0"));
+        assert!(is_falsy("false"));
+        assert!(is_falsy("n"));
+        assert!(is_falsy("N"));
+        assert!(is_falsy("no"));
+        assert!(is_falsy("off"));
 
-        assert!(!is_no("y"));
+        assert!(!is_falsy("y"));
     }
 }

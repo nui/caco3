@@ -1,11 +1,28 @@
 use std::fmt;
 
-use serde::de::Unexpected;
+use serde::de::{Expected, Unexpected};
 use serde::{de, Deserializer};
 
-use crate::config::{is_no, is_yes};
+use crate::config::{is_falsy, is_truthy};
 
-pub fn bool_from_config_value<'de, D: Deserializer<'de>>(de: D) -> Result<bool, D::Error> {
+struct TruthyOrFalsy;
+
+impl Expected for TruthyOrFalsy {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut values = super::TRUTHY_VALUES
+            .iter()
+            .chain(super::FALSY_VALUES.iter())
+            .copied();
+        let first = values.next().unwrap();
+        write!(formatter, r##"Any of ["{}""##, first)?;
+        for v in values {
+            write!(formatter, r##", "{v}""##)?;
+        }
+        write!(formatter, "] (case-insensitive)")
+    }
+}
+
+pub fn bool_from_choice<'de, D: Deserializer<'de>>(de: D) -> Result<bool, D::Error> {
     struct Visitor;
 
     impl<'de> de::Visitor<'de> for Visitor {
@@ -35,9 +52,9 @@ pub fn bool_from_config_value<'de, D: Deserializer<'de>>(de: D) -> Result<bool, 
 
         fn visit_str<E: de::Error>(self, val: &str) -> Result<bool, E> {
             match val {
-                v if is_yes(v) => Ok(true),
-                v if is_no(v) => Ok(false),
-                s => Err(E::invalid_value(Unexpected::Str(s), &"true or false")),
+                v if is_truthy(v) => Ok(true),
+                v if is_falsy(v) => Ok(false),
+                s => Err(E::invalid_value(Unexpected::Str(s), &TruthyOrFalsy)),
             }
         }
     }
@@ -54,7 +71,7 @@ mod tests {
 
     #[derive(Deserialize, Debug, Eq, PartialEq)]
     #[serde(transparent)]
-    struct Bool(#[serde(deserialize_with = "bool_from_config_value")] bool);
+    struct Bool(#[serde(deserialize_with = "bool_from_choice")] bool);
 
     #[test]
     fn test_deserialize() {
