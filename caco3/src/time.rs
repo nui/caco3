@@ -1,3 +1,5 @@
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
+
 use time::UtcOffset;
 
 #[cfg(feature = "local-offset")]
@@ -15,3 +17,7 @@ pub const THAILAND_UTC_OFFSET: UtcOffset = {
     }
 };
 
+pub fn duration_since_unix_time(unix_time: u64) -> Option<Duration> {
+    let now_epoch = SystemTime::now().duration_since(UNIX_EPOCH).ok()?;
+    now_epoch.checked_sub(Duration::from_secs(unix_time))
+}
