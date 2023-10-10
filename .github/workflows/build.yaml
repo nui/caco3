@@ -1,0 +1,34 @@
+name: Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      runs_on:
+        description: Type of machine to run the job on
+        required: true
+        type: choice
+        default: caco3-k8s
+        options:
+          - ubuntu-latest
+          - caco3-k8s
+
+jobs:
+  build:
+    runs-on: ${{ inputs.runs_on }}
+    name: Build
+
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    container:
+      image: rust:1.73-bookworm
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Fix git on CI
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Run script
+        run: |
+          whoami
