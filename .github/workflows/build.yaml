@@ -29,6 +29,9 @@ jobs:
       - uses: actions/checkout@v3
       - name: Fix git on CI
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Test
+        run: |
+          cargo test --all
       - name: Run script
         run: |
           whoami
