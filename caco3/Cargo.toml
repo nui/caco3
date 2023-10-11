@@ -22,7 +22,7 @@ indoc = "2"
 serde = { version = "1", features = ["derive"] }
 thiserror = "1"
 time = { version = "0.3", features = ["local-offset", "macros", "serde", "serde-well-known"] }
-toml = { version = "0.7" }
+toml = { version = "0.8" }
 tz-rs = { version = "0.6", optional = true }
 
 [dev-dependencies]

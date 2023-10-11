@@ -17,7 +17,7 @@ figment = ["dep:figment"]
 time = ["dep:time"]
 
 [dependencies]
-bytemuck = { version = "1.13", features = ["derive"] }
+bytemuck = { version = "1.14", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }
 
 byte-unit = { version = "4", default-features = false, features = ["serde"], optional = true }
