@@ -1,20 +1,11 @@
 name: Build
 
 on:
-  workflow_dispatch:
-    inputs:
-      runs_on:
-        description: Type of machine to run the job on
-        required: true
-        type: choice
-        default: caco3-k8s
-        options:
-          - ubuntu-latest
-          - caco3-k8s
+  pull_request:
 
 jobs:
   build:
-    runs-on: ${{ inputs.runs_on }}
+    runs-on: caco3-k8s
     name: Build
 
     # Add "id-token" with the intended permissions.
@@ -29,9 +20,6 @@ jobs:
       - uses: actions/checkout@v3
       - name: Fix git on CI
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-      - name: Test
+      - name: Test dangerous PR 
         run: |
-          cargo test --all
-      - name: Run script
-        run: |
-          whoami
+          echo "This is dangerous pr"
