@@ -92,7 +92,7 @@ fn is_valid_id(id: &str) -> bool {
 }
 
 fn get_rustc_version() -> Result<String> {
-    let rustc = std::env::var("RUSTC_WRAPPER").ok();
+    let rustc = std::env::var("RUSTC").ok();
     let rustc = rustc.as_deref().unwrap_or("rustc");
     let output = Command::new(rustc)
         .arg("--version")
