@@ -1,4 +1,4 @@
-use byte_unit::AdjustedByte;
+use byte_unit::{AdjustedByte, UnitType};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -50,7 +50,7 @@ impl JemallocInfo {
     pub fn from_raw(raw_data: JemallocRawData) -> Option<Self> {
         use byte_unit::Byte;
         fn byte_from_usize(n: usize) -> Option<AdjustedByte> {
-            Some(Byte::from_bytes(n.try_into().ok()?).get_appropriate_unit(true))
+            Some(Byte::from_u64(n.try_into().ok()?).get_appropriate_unit(UnitType::Binary))
         }
         let jemalloc = {
             let JemallocRawData {

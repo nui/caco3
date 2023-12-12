@@ -12,7 +12,7 @@ authors = ["Narongwet Mongkonsatcha <narongwet.m@gmail.com>"]
 
 [dependencies]
 axum = "0.7"
-byte-unit = { version = "5", default-features = false, features = ["serde"] }
+byte-unit = { version = "5", default-features = false, features = ["byte", "serde"] }
 bytemuck = { version = "1.14", features = ["derive"] }
 futures-core = "0.3"
 figment = "0.10"
