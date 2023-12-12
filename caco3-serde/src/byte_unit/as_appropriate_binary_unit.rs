@@ -15,7 +15,7 @@ where
 mod private {
     use core::fmt;
 
-    use byte_unit::Byte;
+    use byte_unit::{Byte, UnitType};
     use bytemuck::TransparentWrapper;
     use serde::{Serialize, Serializer};
 
@@ -48,7 +48,7 @@ mod private {
         where
             S: Serializer,
         {
-            let byte = self.0.get_appropriate_unit(true);
+            let byte = self.0.get_appropriate_unit(UnitType::Binary);
             Serialize::serialize(&byte, serializer)
         }
     }
@@ -96,12 +96,12 @@ mod private {
 
     #[cfg(test)]
     mod tests {
-        use serde_test::{assert_ser_tokens, Token};
         use super::*;
+        use serde_test::{assert_ser_tokens, Configure, Token};
 
         #[test]
         fn test_new_borrowed_safety() {
-            let byte = Byte::from_bytes(10);
+            let byte = Byte::from_u64(10);
             let _serde = Serde::new_ref(&byte);
         }
 
@@ -110,13 +110,8 @@ mod private {
             #[derive(Serialize)]
             #[serde(transparent)]
             struct BinaryByte(#[serde(serialize_with = "super::super::serialize")] Byte);
-            let byte = BinaryByte(Byte::from_bytes(2 * 1024));
-            assert_ser_tokens(
-                &byte,
-                &[
-                    Token::Str(r#"2.00 KiB"#)
-                ]
-            );
+            let byte = BinaryByte(Byte::from_u64(2 * 1024)).readable();
+            assert_ser_tokens(&byte, &[Token::Str(r#"2 KiB"#)]);
 
             #[derive(Serialize)]
             #[serde(transparent)]
@@ -124,16 +119,10 @@ mod private {
                 #[serde(serialize_with = "super::super::serialize")] Option<Byte>,
             );
             let byte = BinaryOptionByte(None);
-            assert_ser_tokens(
-                &byte,
-                &[Token::None]
-            );
+            assert_ser_tokens(&byte, &[Token::None]);
 
-            let byte = BinaryOptionByte(Some(Byte::from_bytes(2 * 1024)));
-            assert_ser_tokens(
-                &byte,
-                &[Token::Some, Token::Str("2.00 KiB")]
-            );
+            let byte = BinaryOptionByte(Some(Byte::from_u64(2 * 1024))).readable();
+            assert_ser_tokens(&byte, &[Token::Some, Token::Str("2 KiB")]);
         }
     }
 }
