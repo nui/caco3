@@ -157,7 +157,7 @@ impl Iterator for DurationComponents {
                 Unit::Day => self.time.days().map(DurationComponent::days),
                 Unit::Hour => self.time.hours().map(DurationComponent::hours),
                 Unit::Minute => self.time.minutes().map(DurationComponent::minutes),
-                Unit::Second => Some(self.time.secs()).map(DurationComponent::seconds),
+                Unit::Second => Some(DurationComponent::seconds(self.time.secs())),
             };
             if component.is_some() {
                 break component;
