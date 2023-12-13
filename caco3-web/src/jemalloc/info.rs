@@ -1,4 +1,4 @@
-use byte_unit::{AdjustedByte, UnitType};
+use byte_unit::UnitType;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -10,13 +10,13 @@ pub struct JemallocInfo {
 #[derive(Serialize)]
 struct Stats {
     // these two are the most interested
-    allocated: AdjustedByte,
-    resident: AdjustedByte,
+    allocated: String,
+    resident: String,
     // other values
-    active: AdjustedByte,
-    mapped: AdjustedByte,
-    metadata: AdjustedByte,
-    retained: AdjustedByte,
+    active: String,
+    mapped: String,
+    metadata: String,
+    retained: String,
 }
 
 #[derive(Serialize)]
@@ -49,8 +49,10 @@ pub struct JemallocRawData {
 impl JemallocInfo {
     pub fn from_raw(raw_data: JemallocRawData) -> Option<Self> {
         use byte_unit::Byte;
-        fn byte_from_usize(n: usize) -> Option<AdjustedByte> {
-            Some(Byte::from_u64(n.try_into().ok()?).get_appropriate_unit(UnitType::Binary))
+        fn byte_from_usize(n: usize) -> Option<String> {
+            let adjusted_byte =
+                Byte::from_u64(n.try_into().ok()?).get_appropriate_unit(UnitType::Binary);
+            Some(format!("{adjusted_byte:.2}"))
         }
         let jemalloc = {
             let JemallocRawData {
