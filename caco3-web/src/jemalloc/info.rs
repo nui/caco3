@@ -1,28 +1,49 @@
-use byte_unit::UnitType;
-use serde::Serialize;
+use std::fmt::Write;
+
+use arrayvec::ArrayString;
+use byte_unit::{Byte, UnitType};
+use serde::ser::Error as _;
+use serde::{Serialize, Serializer};
 
 #[derive(Serialize)]
 pub struct JemallocInfo {
-    options: Options,
-    stats: Stats,
+    pub options: Options,
+    pub stats: Stats,
 }
 
 #[derive(Serialize)]
-struct Stats {
+pub struct Stats {
     // these two are the most interested
-    allocated: String,
-    resident: String,
+    #[serde(serialize_with = "serialize_byte")]
+    pub allocated: Byte,
+    #[serde(serialize_with = "serialize_byte")]
+    pub resident: Byte,
     // other values
-    active: String,
-    mapped: String,
-    metadata: String,
-    retained: String,
+    #[serde(serialize_with = "serialize_byte")]
+    pub active: Byte,
+    #[serde(serialize_with = "serialize_byte")]
+    pub mapped: Byte,
+    #[serde(serialize_with = "serialize_byte")]
+    pub metadata: Byte,
+    #[serde(serialize_with = "serialize_byte")]
+    pub retained: Byte,
+}
+
+fn serialize_byte<S>(this: &Byte, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let mut buffer: ArrayString<256> = ArrayString::new();
+    let adjusted_byte = this.get_appropriate_unit(UnitType::Binary);
+    write!(&mut buffer, "{adjusted_byte:.2}")
+        .map_err(|_| S::Error::custom(format!("serialize adjusted byte: {adjusted_byte}")))?;
+    serializer.serialize_str(buffer.as_str())
 }
 
 #[derive(Serialize)]
-struct Options {
-    background_thread: Option<BackgroundThread>,
-    number_of_arenas: u32,
+pub struct Options {
+    pub background_thread: Option<BackgroundThread>,
+    pub number_of_arenas: u32,
 }
 
 #[doc(hidden)]
@@ -48,11 +69,8 @@ pub struct JemallocRawData {
 
 impl JemallocInfo {
     pub fn from_raw(raw_data: JemallocRawData) -> Option<Self> {
-        use byte_unit::Byte;
-        fn byte_from_usize(n: usize) -> Option<String> {
-            let adjusted_byte =
-                Byte::from_u64(n.try_into().ok()?).get_appropriate_unit(UnitType::Binary);
-            Some(format!("{adjusted_byte:.2}"))
+        fn byte_from_usize(n: usize) -> Option<Byte> {
+            Some(Byte::from_u64(n.try_into().ok()?))
         }
         let jemalloc = {
             let JemallocRawData {
