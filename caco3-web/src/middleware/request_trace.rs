@@ -10,7 +10,7 @@ use tower::{Layer, Service};
 use tracing::trace;
 
 pub trait RequestTrace {
-    fn is_traced(&self, path: Option<&MatchedPath>) -> bool;
+    fn is_traced(&self, path: &str) -> bool;
 
     fn enabled(&self) -> bool {
         true
@@ -42,8 +42,8 @@ pub struct RequestTraceLayer<F> {
 }
 
 impl<S, F> Layer<S> for RequestTraceLayer<F>
-where
-    F: Clone,
+    where
+        F: Clone,
 {
     type Service = RequestTraceService<S, F>;
 
@@ -62,10 +62,10 @@ impl<F> RequestTraceLayer<F> {
 }
 
 impl<ReqBody, ResBody, S, F, T> Service<Request<ReqBody>> for RequestTraceService<S, F>
-where
-    S: Service<Request<ReqBody>, Response = Response<ResBody>>,
-    F: FnMut() -> T,
-    T: RequestTrace,
+    where
+        S: Service<Request<ReqBody>, Response=Response<ResBody>>,
+        F: FnMut() -> T,
+        T: RequestTrace,
 {
     type Response = S::Response;
     type Error = S::Error;
@@ -79,22 +79,24 @@ where
         let tracer = (self.make_tracer)();
         let enabled = tracer.enabled();
         let mut request_trace = None;
-        let mut matched_path = None;
 
         if enabled {
-            matched_path = req.extensions().get::<MatchedPath>();
-            let trace = tracer.is_traced(matched_path);
+            let path = if let Some(path) = req.extensions().get::<MatchedPath>() {
+                path.as_str()
+            } else {
+                req.uri().path()
+            };
+            let trace = tracer.is_traced(path);
             request_trace = Some(RequestTraceData {
                 trace,
                 method: req.method().clone(),
                 uri: req.uri().clone(),
             });
+            trace!(
+                "RequestTraceService: path = {path:?}, \
+                request_trace = {request_trace:?}",
+            );
         }
-
-        trace!(
-            "RequestTraceService: enabled = {enabled}, matched_path = {matched_path:?}, \
-            request_trace = {request_trace:?}",
-        );
 
         RequestTraceFuture {
             request_trace,
@@ -117,8 +119,8 @@ enum FutureState<Request, S: Service<Request>> {
 }
 
 impl<Request, ResBody, S> Future for RequestTraceFuture<Request, S>
-where
-    S: Service<Request, Response = Response<ResBody>>,
+    where
+        S: Service<Request, Response=Response<ResBody>>,
 {
     type Output = Result<S::Response, S::Error>;
 
@@ -127,7 +129,6 @@ where
         match this.state.as_mut().project() {
             FutureStateProj::Polling(service_fut) => {
                 let mut output: Self::Output = ready!(service_fut.poll(cx));
-                // TODO: Decide if we should set finished state earlier if panic may occur
                 if let Ok(response) = &mut output {
                     if let Some(request_trace) = this.request_trace.take() {
                         response.extensions_mut().insert(request_trace);
