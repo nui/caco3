@@ -10,7 +10,7 @@ use tower::{Layer, Service};
 use tracing::trace;
 
 pub trait RequestTrace {
-    fn is_traced(&self, path: &str) -> bool;
+    fn is_traced(&self, path: &str, matched: bool) -> bool;
 
     fn enabled(&self) -> bool {
         true
@@ -81,12 +81,16 @@ impl<ReqBody, ResBody, S, F, T> Service<Request<ReqBody>> for RequestTraceServic
         let mut request_trace = None;
 
         if enabled {
-            let path = if let Some(path) = req.extensions().get::<MatchedPath>() {
-                path.as_str()
+            let matched;
+            let path;
+            if let Some(matched_path) = req.extensions().get::<MatchedPath>() {
+                matched = true;
+                path = matched_path.as_str();
             } else {
-                req.uri().path()
+                matched = false;
+                path = req.uri().path();
             };
-            let trace = tracer.is_traced(path);
+            let trace = tracer.is_traced(path, matched);
             request_trace = Some(RequestTraceData {
                 trace,
                 method: req.method().clone(),
