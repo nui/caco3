@@ -15,7 +15,8 @@ pub struct Jemalloc {
     pub number_of_arenas: Option<u32>,
 }
 
-const POSSIBLE_MALLOC_CONF_ENVIRONMENT_VARIABLES: &[&str] = &["MALLOC_CONF", "_RJEM_MALLOC_CONF"];
+pub const POSSIBLE_MALLOC_CONF_ENVIRONMENT_VARIABLES: &[&str] =
+    &["MALLOC_CONF", "_RJEM_MALLOC_CONF"];
 
 /// Return `true` if jemalloc background managed threads is supported.
 pub const fn is_background_thread_supported() -> bool {
