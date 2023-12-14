@@ -7,7 +7,7 @@ on:
         description: Package to publish
         required: true
         type: choice
-        default: caco3
+        default: caco3-web
         options:
           - caco3
           - caco3-build-info
