@@ -1,0 +1,41 @@
+name: Test and publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Package to publish
+        required: true
+        type: choice
+        default: caco3
+        options:
+          - caco3
+          - caco3-build-info
+          - caco3-serde
+          - caco3-web
+
+jobs:
+  test-publish:
+    runs-on: ubuntu-latest
+    name: Build
+
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    container:
+      image: rust:1.74-bookworm
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Fix git on CI
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Test
+        run: cargo test --all --all-features
+      - name: Publish
+        env:
+          API_TOKEN: ${{ secrets.CRATES_IO_API_TOKEN }}
+          PACKAGE: ${{ inputs.package }}
+        run: cargo publish --package "$PACKAGE" --token "$API_TOKEN"
+
