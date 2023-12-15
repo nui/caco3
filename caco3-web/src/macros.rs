@@ -58,7 +58,6 @@ macro_rules! measure_time {
     (SEC,   $tag:expr, $expr:expr) => { $crate::measure_time!(@unit ["s",  as_secs];   $tag, $expr) };
 }
 
-
 /// Generate database access layer method on given struct.
 ///
 /// This helper macro avoid boilerplate when implement database access layer.
@@ -299,7 +298,6 @@ macro_rules! postgres_query_internal {
     };
 }
 
-
 #[macro_export]
 macro_rules! sqlite_query {
     // Hide distracting implementation details from the generated rustdoc.
@@ -444,7 +442,6 @@ macro_rules! sqlite_query_internal {
     };
 }
 
-
 /// Generate `builder()` method which return builder with default values.
 #[macro_export]
 macro_rules! with_builder {
@@ -465,22 +462,63 @@ macro_rules! generate_read_jemalloc_raw_data {
     ($vis:vis fn $name:ident) => {
         $vis fn $name() -> ::core::option::Option<$crate::jemalloc::info::JemallocRawData> {
             use ::std::prelude::*;
-            use tikv_jemalloc_ctl::{arenas, background_thread, epoch, max_background_threads, stats};
+            use ::std::sync::OnceLock;
+
+            use ::tikv_jemalloc_ctl::{
+                arenas, background_thread, background_thread_mib, epoch, epoch_mib, max_background_threads,
+                max_background_threads_mib, stats,
+            };
 
             use $crate::jemalloc::info::{JemallocRawData, BackgroundThread};
 
-            fn read_background_thread() -> Option<BackgroundThread> {
+            struct Mib {
+                epoch: epoch_mib,
+                max_background_threads: max_background_threads_mib,
+                background_thread: background_thread_mib,
+                narenas: arenas::narenas_mib,
+                active: stats::active_mib,
+                allocated: stats::allocated_mib,
+                mapped: stats::mapped_mib,
+                metadata: stats::metadata_mib,
+                resident: stats::resident_mib,
+                retained: stats::retained_mib,
+            }
+
+            fn read_background_thread(mib: &Mib) -> Option<BackgroundThread> {
                 Some(BackgroundThread {
-                    max: max_background_threads::read().ok()?,
-                    enabled: background_thread::read().ok()?,
+                    max: mib.max_background_threads.read().ok()?,
+                    enabled: mib.background_thread.read().ok()?,
                 })
             }
+
+            fn get_mib() -> Option<&'static Mib> {
+                static MIB: OnceLock<Option<Mib>> = OnceLock::new();
+                fn init() -> Option<Mib> {
+                    let val = Mib {
+                        epoch: epoch::mib().ok()?,
+                        max_background_threads: max_background_threads::mib().ok()?,
+                        background_thread: background_thread::mib().ok()?,
+                        narenas: arenas::narenas::mib().ok()?,
+                        active: stats::active::mib().ok()?,
+                        allocated: stats::allocated::mib().ok()?,
+                        mapped: stats::mapped::mib().ok()?,
+                        metadata: stats::metadata::mib().ok()?,
+                        resident: stats::resident::mib().ok()?,
+                        retained: stats::retained::mib().ok()?,
+                    };
+                    Some(val)
+                }
+                MIB.get_or_init(init).as_ref()
+            }
+
+            let mib = get_mib()?;
             // Many statistics are cached and only updated
             // when the epoch is advanced:
-            epoch::advance().ok()?;
+            mib.epoch.advance().ok()?;
+
             let value = JemallocRawData {
                 // config
-                background_thread: read_background_thread(),
+                background_thread: read_background_thread(&mib),
                 number_of_arenas: arenas::narenas::read().ok()?,
                 // stats
                 active_bytes: stats::active::read().ok()?,
