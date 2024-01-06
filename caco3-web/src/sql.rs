@@ -10,7 +10,7 @@ pub trait SqlTrimBoxed: private::Sealed {
 
 fn keep_sql_line(line: &str) -> Option<&str> {
     let trimmed = line.trim();
-    // We doesn't support C-style block comments.
+    // We do not remove C-style block comments.
     let is_comment_line = || trimmed.starts_with("--");
     let is_blank_line = || trimmed.is_empty();
     let skip = is_comment_line() || is_blank_line();
