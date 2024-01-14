@@ -23,7 +23,7 @@ jobs:
       id-token: 'write'
 
     container:
-      image: rust:1.73-bookworm
+      image: rust:1.75-bookworm
 
     steps:
       - uses: actions/checkout@v3
