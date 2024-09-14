@@ -26,4 +26,4 @@ toml = { version = "0.8" }
 tz-rs = { version = "0.6", optional = true }
 
 [dev-dependencies]
-serde_test = "1.0.176"
+serde_test = "1.0.177"
