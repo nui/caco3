@@ -25,10 +25,10 @@ jobs:
       id-token: 'write'
 
     container:
-      image: rust:1.75-bookworm
+      image: rust:1.83-bookworm
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Fix git on CI
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Test

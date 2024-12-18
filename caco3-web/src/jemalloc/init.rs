@@ -11,8 +11,12 @@ use serde::{Deserialize, Serialize};
 pub struct Jemalloc {
     #[serde(default)]
     pub background_thread: bool,
+    #[serde(default)]
     pub max_background_threads: Option<u32>,
+    #[serde(default)]
     pub number_of_arenas: Option<u32>,
+    #[serde(default)]
+    pub extra_conf: Option<String>
 }
 
 pub const POSSIBLE_MALLOC_CONF_ENVIRONMENT_VARIABLES: &[&str] =
@@ -79,6 +83,10 @@ impl Jemalloc {
         if let Some(v) = self.number_of_arenas {
             write_config("narenas", &v);
         }
+        if let Some(extra_conf) = self.extra_conf.as_deref() {
+            config.push(',');
+            config.push_str(extra_conf);
+        }
         config
     }
 }
@@ -93,13 +101,23 @@ mod tests {
             background_thread: false,
             max_background_threads: None,
             number_of_arenas: None,
+            extra_conf: None,
         };
         assert_eq!(val.to_config(), "abort_conf:true");
 
         let val = Jemalloc {
             background_thread: false,
             max_background_threads: None,
+            number_of_arenas: None,
+            extra_conf: Some("tcache:false".to_owned()),
+        };
+        assert_eq!(val.to_config(), "abort_conf:true,tcache:false");
+
+        let val = Jemalloc {
+            background_thread: false,
+            max_background_threads: None,
             number_of_arenas: Some(16),
+            extra_conf: None,
         };
         assert_eq!(val.to_config(), "abort_conf:true,narenas:16");
 
@@ -107,6 +125,7 @@ mod tests {
             background_thread: true,
             max_background_threads: None,
             number_of_arenas: None,
+            extra_conf: None,
         };
         assert_eq!(val.to_config(), "abort_conf:true");
 
@@ -114,6 +133,7 @@ mod tests {
             background_thread: false,
             max_background_threads: Some(4),
             number_of_arenas: None,
+            extra_conf: None,
         };
         assert_eq!(val.to_config(), "abort_conf:true,max_background_threads:4");
 
@@ -121,6 +141,7 @@ mod tests {
             background_thread: true,
             max_background_threads: Some(8),
             number_of_arenas: Some(64),
+            extra_conf: None,
         };
         assert_eq!(
             val.to_config(),
