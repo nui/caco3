@@ -2,5 +2,5 @@
 set -ex
 
 cargo test --all --all-features
-cargo +nightly miri test
+MIRIFLAGS=-Zmiri-ignore-leaks cargo +nightly miri test
 

@@ -1,6 +1,6 @@
 [package]
 name = "caco3-web"
-version = "0.5.1"
+version = "0.6.0"
 edition = "2021"
 publish = true
 description = "CaCO3 Web"
@@ -13,7 +13,7 @@ rust-version = "1.75.0"
 
 [dependencies]
 arrayvec = { version = "0.7", features = ["serde"] }
-axum = "0.7"
+axum = "0.8"
 byte-unit = { version = "5", default-features = false, features = ["byte", "serde"] }
 bytemuck = { version = "1.18", features = ["derive"] }
 figment = "0.10"
