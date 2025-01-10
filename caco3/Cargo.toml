@@ -1,6 +1,6 @@
 [package]
 name = "caco3"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 publish = true
 description = "CaCO3 common lib"
@@ -27,3 +27,4 @@ tz-rs = { version = "0.6", optional = true }
 
 [dev-dependencies]
 serde_test = "1.0.177"
+uuid = { version = "1.11.1", features = ["v4"] }
