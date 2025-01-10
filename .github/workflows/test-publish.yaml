@@ -11,6 +11,7 @@ on:
         options:
           - caco3
           - caco3-build-info
+          - caco3-pty
           - caco3-serde
           - caco3-web
 
@@ -25,7 +26,7 @@ jobs:
       id-token: 'write'
 
     container:
-      image: rust:1.83-bookworm
+      image: rust:1.84-bookworm
 
     steps:
       - uses: actions/checkout@v4

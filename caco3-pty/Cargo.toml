@@ -1,0 +1,14 @@
+[package]
+name = "caco3-pty"
+version = "0.0.1"
+edition = "2021"
+publish = true
+description = "CaCO3 PTY"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/nui/caco3"
+authors = ["Narongwet Mongkonsatcha <narongwet.m@gmail.com>"]
+
+[dependencies]
+libc = "0.2"
+nix = { version = "0.29", features = ["term", "process"] }
+tokio = { version = "1.43", features = ["process", "net"] }
