@@ -47,16 +47,18 @@ impl<T, G> OnceToken<T, G> {
         U: PartialEq + ?Sized,
     {
         let data = &mut *self.data();
-        let expired = data.take_if(|v| v.created.elapsed() > self.ttl).is_some();
-        if expired {
-            false // expired token is unauthorized
-        } else {
-            data.take_if(|v| v.token.borrow() == token).is_some()
-        }
+        self.remove_expired_token(data);
+        data.take_if(|v| v.token.borrow() == token).is_some()
     }
 
     pub fn ttl(&self) -> Duration {
         self.ttl
+    }
+
+    #[allow(clippy::let_and_return)]
+    fn remove_expired_token(&self, data: &mut Option<TokenData<T>>) -> bool {
+        let expired = data.take_if(|v| v.created.elapsed() > self.ttl).is_some();
+        expired
     }
 
     fn data(&self) -> MutexGuard<'_, Option<TokenData<T>>> {
