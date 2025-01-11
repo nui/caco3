@@ -1,6 +1,6 @@
 [package]
 name = "caco3"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 publish = true
 description = "CaCO3 common lib"
@@ -18,9 +18,8 @@ default = []
 local-offset = ["time/local-offset", "dep:tz-rs"]
 
 [dependencies]
-indoc = "2"
 serde = { version = "1", features = ["derive"] }
-thiserror = "1"
+thiserror = "2"
 time = { version = "0.3", features = ["local-offset", "macros", "serde", "serde-well-known"] }
 toml = { version = "0.8" }
 tz-rs = { version = "0.6", optional = true }
