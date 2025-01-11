@@ -161,7 +161,7 @@ checksum = "8318a53db07bb3f8dca91a600466bdb3f2eaadeedfdbcf02e1accbad9271ba50"
 
 [[package]]
 name = "caco3"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
  "serde",
  "serde_test",
@@ -204,12 +204,11 @@ dependencies = [
 
 [[package]]
 name = "caco3-web"
-version = "0.6.0"
+version = "0.6.1"
 dependencies = [
  "arrayvec",
  "axum",
  "byte-unit",
- "bytemuck",
  "figment",
  "futures-core",
  "http",
@@ -219,7 +218,6 @@ dependencies = [
  "serde_json",
  "strum",
  "thiserror 1.0.63",
- "time",
  "tower 0.5.2",
  "tracing",
 ]

@@ -25,7 +25,7 @@ impl Expected for TruthyOrFalsy {
 pub fn bool_from_choice<'de, D: Deserializer<'de>>(de: D) -> Result<bool, D::Error> {
     struct Visitor;
 
-    impl<'de> de::Visitor<'de> for Visitor {
+    impl de::Visitor<'_> for Visitor {
         type Value = bool;
 
         fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

@@ -95,6 +95,7 @@ impl<T: ?Sized> Dep<T> {
         Some(arc)
     }
 
+    #[allow(clippy::result_unit_err)]
     pub fn try_with<F, R>(&self, f: F) -> Result<R, ()>
     where
         F: FnOnce(&T) -> R,

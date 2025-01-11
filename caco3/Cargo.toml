@@ -1,13 +1,13 @@
 [package]
 name = "caco3"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2021"
 publish = true
 description = "CaCO3 common lib"
 license = "MIT OR Apache-2.0"
 readme = "readme.package.md"
 exclude = ["README.md"]
-rust-version = "1.70.0"
+rust-version = "1.80.0"
 repository = "https://github.com/nui/caco3"
 authors = ["Narongwet Mongkonsatcha <narongwet.m@gmail.com>"]
 

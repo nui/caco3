@@ -9,7 +9,7 @@ pub trait OnUncompletedDrop: Future + Send + Sized {
     /// if `panic` is true, `f` is also called on panic.
     fn on_uncompleted_drop<F>(self, panic: bool, f: F) -> impl Future<Output = Self::Output> + Send
     where
-        F: FnOnce() -> () + Send,
+        F: FnOnce() + Send,
     {
         let drop_guard = UncompletedDropGuard { f: Some(f), panic };
         async move {
@@ -22,7 +22,7 @@ pub trait OnUncompletedDrop: Future + Send + Sized {
 
 struct UncompletedDropGuard<F>
 where
-    F: FnOnce() -> () + Send,
+    F: FnOnce() + Send,
 {
     f: Option<F>,
     panic: bool,
@@ -30,7 +30,7 @@ where
 
 impl<F> Drop for UncompletedDropGuard<F>
 where
-    F: FnOnce() -> () + Send,
+    F: FnOnce() + Send,
 {
     fn drop(&mut self) {
         if let Some(f) = self.f.take() {
@@ -47,7 +47,7 @@ pub trait OnUncompletedDropLocal: Future + Sized {
     /// Call given closure `f` when uncompleted future is dropped.
     ///
     /// if `panic` is true, `f` is also called on panic.
-    fn on_uncompleted_drop_local<F: FnOnce() -> ()>(
+    fn on_uncompleted_drop_local<F: FnOnce()>(
         self,
         panic: bool,
         f: F,
@@ -63,7 +63,7 @@ pub trait OnUncompletedDropLocal: Future + Sized {
 
 struct UncompletedDropGuardLocal<F>
 where
-    F: FnOnce() -> (),
+    F: FnOnce(),
 {
     f: Option<F>,
     panic: bool,
@@ -71,7 +71,7 @@ where
 
 impl<F> Drop for UncompletedDropGuardLocal<F>
 where
-    F: FnOnce() -> (),
+    F: FnOnce(),
 {
     fn drop(&mut self) {
         if let Some(f) = self.f.take() {
