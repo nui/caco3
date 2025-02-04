@@ -13,11 +13,11 @@ mod local_time;
 pub const THAILAND_UTC_OFFSET: UtcOffset = {
     match UtcOffset::from_hms(7, 0, 0) {
         Ok(val) => val,
-        Err(_) => unreachable!()
+        Err(_) => unreachable!(),
     }
 };
 
-pub fn duration_since_unix_time(unix_time: u64) -> Option<Duration> {
+pub fn duration_since_unix_time(unix_timestamp: u64) -> Option<Duration> {
     let now_epoch = SystemTime::now().duration_since(UNIX_EPOCH).ok()?;
-    now_epoch.checked_sub(Duration::from_secs(unix_time))
+    now_epoch.checked_sub(Duration::from_secs(unix_timestamp))
 }
