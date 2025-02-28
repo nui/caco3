@@ -3,6 +3,6 @@
 
 pub mod cargo;
 pub mod config;
+pub mod text;
 pub mod time;
-
 pub mod token;

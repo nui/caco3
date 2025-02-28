@@ -161,7 +161,7 @@ checksum = "8318a53db07bb3f8dca91a600466bdb3f2eaadeedfdbcf02e1accbad9271ba50"
 
 [[package]]
 name = "caco3"
-version = "0.1.7"
+version = "0.1.8"
 dependencies = [
  "serde",
  "serde_test",
