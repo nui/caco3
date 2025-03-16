@@ -1,4 +1,7 @@
 use serde::{Deserialize, Deserializer};
+use std::fmt;
+use std::fmt::Formatter;
+use std::path::PathBuf;
 
 use private::Serde;
 
@@ -11,10 +14,11 @@ where
 }
 
 mod private {
+    use crate::figment::camino::NonUtf8PathError;
+    use camino::Utf8PathBuf;
     use core::fmt;
-    use std::path::PathBuf;
-
     use figment::value::magic::RelativePathBuf;
+    use serde::de::Error;
     use serde::{Deserialize, Deserializer};
 
     pub struct Serde<T>(T);
@@ -34,25 +38,41 @@ mod private {
         }
     }
 
-    impl<'de> Deserialize<'de> for Serde<PathBuf> {
+    impl<'de> Deserialize<'de> for Serde<Utf8PathBuf> {
         fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
         where
             D: Deserializer<'de>,
         {
             let path = RelativePathBuf::deserialize(deserializer)?;
-            Ok(Serde(path.relative()))
+            let relative_path = path.relative();
+            let utf8path = Utf8PathBuf::from_path_buf(relative_path)
+                .map_err(|path| Error::custom(NonUtf8PathError(path)))?;
+            Ok(Serde(utf8path))
         }
     }
 
-    impl<'de> Deserialize<'de> for Serde<Option<PathBuf>> {
+    impl<'de> Deserialize<'de> for Serde<Option<Utf8PathBuf>> {
         fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
         where
             D: Deserializer<'de>,
         {
             match <Option<RelativePathBuf>>::deserialize(deserializer)? {
-                Some(path) => Ok(Serde(Some(path.relative()))),
+                Some(path) => {
+                    let relative_path = path.relative();
+                    let utf8path = Utf8PathBuf::from_path_buf(relative_path)
+                        .map_err(|path| Error::custom(NonUtf8PathError(path)))?;
+                    Ok(Serde(Some(utf8path)))
+                }
                 None => Ok(Serde(None)),
             }
         }
+    }
+}
+
+struct NonUtf8PathError(PathBuf);
+
+impl fmt::Display for NonUtf8PathError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{} has invalid utf8 bytes", self.0.display())
     }
 }

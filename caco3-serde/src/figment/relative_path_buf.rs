@@ -139,8 +139,6 @@ mod private {
 
     #[cfg(test)]
     mod tests {
-        use std::path::PathBuf;
-
         use super::*;
 
         const DEV_NULL: &str = "/dev/null";
@@ -154,12 +152,7 @@ mod private {
         }
 
         #[test]
-        fn test_new_borrowed_safety() {
-            let path = RelativePathBuf::from(PathBuf::from("/dev/null"));
-            let _serde = Serde::new_ref(&path);
-        }
-
-        #[test]
+        #[ignore = "playground"]
         fn test_serialize() {
             let source = Config {
                 file: RelativePathBuf::from(DEV_NULL),

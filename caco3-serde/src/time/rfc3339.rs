@@ -198,7 +198,7 @@ mod private {
 
     #[cfg(test)]
     mod milli_tests {
-        use serde_test::{assert_de_tokens, assert_ser_tokens, Token};
+        use serde_test::{Token, assert_de_tokens, assert_ser_tokens};
         use time::macros::datetime;
 
         use super::super::millisecond;
@@ -262,7 +262,7 @@ mod private {
 
     #[cfg(test)]
     mod second_tests {
-        use serde_test::{assert_de_tokens, assert_ser_tokens, Token};
+        use serde_test::{Token, assert_de_tokens, assert_ser_tokens};
         use time::macros::datetime;
 
         use super::super::second;

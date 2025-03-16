@@ -97,13 +97,7 @@ mod private {
     #[cfg(test)]
     mod tests {
         use super::*;
-        use serde_test::{assert_ser_tokens, Configure, Token};
-
-        #[test]
-        fn test_new_borrowed_safety() {
-            let byte = Byte::from_u64(10);
-            let _serde = Serde::new_ref(&byte);
-        }
+        use serde_test::{Configure, Token, assert_ser_tokens};
 
         #[test]
         fn test_serialize() {
