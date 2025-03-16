@@ -42,8 +42,8 @@ pub struct RequestTraceLayer<F> {
 }
 
 impl<S, F> Layer<S> for RequestTraceLayer<F>
-    where
-        F: Clone,
+where
+    F: Clone,
 {
     type Service = RequestTraceService<S, F>;
 
@@ -62,10 +62,10 @@ impl<F> RequestTraceLayer<F> {
 }
 
 impl<ReqBody, ResBody, S, F, T> Service<Request<ReqBody>> for RequestTraceService<S, F>
-    where
-        S: Service<Request<ReqBody>, Response=Response<ResBody>>,
-        F: FnMut() -> T,
-        T: RequestTrace,
+where
+    S: Service<Request<ReqBody>, Response = Response<ResBody>>,
+    F: FnMut() -> T,
+    T: RequestTrace,
 {
     type Response = S::Response;
     type Error = S::Error;
@@ -123,8 +123,8 @@ enum FutureState<Request, S: Service<Request>> {
 }
 
 impl<Request, ResBody, S> Future for RequestTraceFuture<Request, S>
-    where
-        S: Service<Request, Response=Response<ResBody>>,
+where
+    S: Service<Request, Response = Response<ResBody>>,
 {
     type Output = Result<S::Response, S::Error>;
 

@@ -1,7 +1,7 @@
 use std::fmt::{Display, Formatter};
 
-use serde::{Deserialize, Serialize};
 use serde::de::DeserializeOwned;
+use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
 use toml::Value;
 
@@ -126,7 +126,6 @@ macro_rules! impl_meta_config_getter_for_option {
 
 impl_meta_config_getter_for_option!(Option<MetaConfig>);
 impl_meta_config_getter_for_option!(Option<&MetaConfig>);
-
 
 #[cfg(test)]
 mod tests {

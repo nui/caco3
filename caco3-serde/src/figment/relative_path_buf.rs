@@ -49,10 +49,10 @@ mod private {
         }
     }
 
-    /// Human readable of `RelativePathBuf`
+    /// Human-readable `RelativePathBuf`
     ///
     /// Default representation of `RelativePathBuf` is for machine not human.
-    /// This struct help serializing it in user friendly format.
+    /// This struct help serializing it in user-friendly format.
     #[derive(Debug, Deserialize, Serialize)]
     struct ReadablePath {
         path: PathBuf,
@@ -143,10 +143,29 @@ mod private {
 
         use super::*;
 
+        const DEV_NULL: &str = "/dev/null";
+
+        use crate::figment::relative_path_buf;
+
+        #[derive(Debug, Deserialize, Serialize)]
+        struct Config {
+            #[serde(with = "relative_path_buf")]
+            file: RelativePathBuf,
+        }
+
         #[test]
         fn test_new_borrowed_safety() {
             let path = RelativePathBuf::from(PathBuf::from("/dev/null"));
             let _serde = Serde::new_ref(&path);
+        }
+
+        #[test]
+        fn test_serialize() {
+            let source = Config {
+                file: RelativePathBuf::from(DEV_NULL),
+            };
+            let actual = toml::to_string_pretty(&source).expect("serializable");
+            println!("{}", &actual);
         }
     }
 }

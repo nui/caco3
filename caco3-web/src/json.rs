@@ -116,8 +116,8 @@ impl ApiJson<()> {
 
 impl<T: Serialize> Serialize for ApiJson<T> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
+    where
+        S: Serializer,
     {
         Serialize::serialize(&self.as_serializable(), serializer)
     }
@@ -140,8 +140,8 @@ pub enum JsonMode {
 
 impl JsonMode {
     pub fn to_string<T>(self, value: &T) -> serde_json::Result<String>
-        where
-            T: ?Sized + Serialize,
+    where
+        T: ?Sized + Serialize,
     {
         match self {
             Self::Normal => serde_json::to_string(value),
@@ -150,8 +150,8 @@ impl JsonMode {
     }
 
     pub fn to_vec<T>(self, value: &T) -> serde_json::Result<Vec<u8>>
-        where
-            T: ?Sized + Serialize,
+    where
+        T: ?Sized + Serialize,
     {
         match self {
             Self::Normal => serde_json::to_vec(value),

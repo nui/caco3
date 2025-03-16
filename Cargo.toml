@@ -4,7 +4,7 @@ members = [
     "caco3-build-info",
     "caco3-pty",
     "caco3-serde",
-    "caco3-web",
+    "caco3-web", "test-caco3-serde",
 ]
 default-members = ["caco3", "caco3-build-info", "caco3-serde", "caco3-web"]
 resolver = "2"

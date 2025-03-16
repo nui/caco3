@@ -1,0 +1,11 @@
+[package]
+name = "test-caco3-serde"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+caco3-serde = { path = "../caco3-serde", features = ["figment"] }
+figment = { version = "0.10.19", features = ["toml", "test"] }
+serde = { version = "1.0.219", features = ["derive"] }
+toml = { version = "0.8.20" }
+indoc = "2.0.6"

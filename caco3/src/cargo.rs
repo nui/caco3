@@ -1,5 +1,5 @@
-use std::{fs, io};
 use std::path::{Path, PathBuf};
+use std::{fs, io};
 
 use serde::Deserialize;
 use thiserror::Error;

@@ -16,7 +16,7 @@ pub struct Jemalloc {
     #[serde(default)]
     pub number_of_arenas: Option<u32>,
     #[serde(default)]
-    pub extra_conf: Option<String>
+    pub extra_conf: Option<String>,
 }
 
 pub const POSSIBLE_MALLOC_CONF_ENVIRONMENT_VARIABLES: &[&str] =

@@ -220,12 +220,15 @@ mod private {
         fn deserialize_millisecond() {
             assert_de_tokens(
                 &Owned(datetime!(2022-01-01 19:00:10.123+07:00)),
-                &[Token::Str("2022-01-01T19:00:10.123456789+07:00")]
+                &[Token::Str("2022-01-01T19:00:10.123456789+07:00")],
             );
 
             assert_de_tokens(
                 &OptionOwned(Some(datetime!(2022-01-01 19:00:10.123+07:00))),
-                &[Token::Some, Token::Str("2022-01-01T19:00:10.123456789+07:00")]
+                &[
+                    Token::Some,
+                    Token::Str("2022-01-01T19:00:10.123456789+07:00"),
+                ],
             );
         }
 
@@ -248,10 +251,7 @@ mod private {
                 &[Token::Some, Token::Str("2022-01-01T19:00:10.123+07:00")],
             );
 
-            assert_ser_tokens(
-                &OptionOwned(None),
-                &[Token::None],
-            );
+            assert_ser_tokens(&OptionOwned(None), &[Token::None]);
 
             assert_ser_tokens(
                 &Owned(datetime!(2022-01-01 19:00:10.123456789+00:00)),
@@ -289,7 +289,10 @@ mod private {
 
             assert_de_tokens(
                 &OptionOwned(Some(datetime!(2022-01-01 19:00:10+07:00))),
-                &[Token::Some, Token::Str("2022-01-01T19:00:10.123456789+07:00")],
+                &[
+                    Token::Some,
+                    Token::Str("2022-01-01T19:00:10.123456789+07:00"),
+                ],
             );
         }
 
@@ -297,25 +300,16 @@ mod private {
         fn serialize_second() {
             let datetime = datetime!(2022-01-01 19:00:10.123456789+07:00);
 
-            assert_ser_tokens(
-                &Owned(datetime),
-                &[Token::Str("2022-01-01T19:00:10+07:00")],
-            );
+            assert_ser_tokens(&Owned(datetime), &[Token::Str("2022-01-01T19:00:10+07:00")]);
 
-            assert_ser_tokens(
-                &Ref(&datetime),
-                &[Token::Str("2022-01-01T19:00:10+07:00")],
-            );
+            assert_ser_tokens(&Ref(&datetime), &[Token::Str("2022-01-01T19:00:10+07:00")]);
 
             assert_ser_tokens(
                 &OptionOwned(Some(datetime)),
                 &[Token::Some, Token::Str("2022-01-01T19:00:10+07:00")],
             );
 
-            assert_ser_tokens(
-                &OptionOwned(None),
-                &[Token::None],
-            );
+            assert_ser_tokens(&OptionOwned(None), &[Token::None]);
 
             assert_ser_tokens(
                 &Owned(datetime!(2022-01-01 19:00:10.123456789+00:00)),
