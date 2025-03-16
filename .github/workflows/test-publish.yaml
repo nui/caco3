@@ -26,7 +26,7 @@ jobs:
       id-token: 'write'
 
     container:
-      image: rust:1.84-bookworm
+      image: rust:1.85-bookworm
 
     steps:
       - uses: actions/checkout@v4
